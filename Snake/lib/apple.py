@@ -20,17 +20,12 @@ class Apple:
             returnValue = self.rect.y
         return returnValue
 
+    def getRect(self):
+        return self.rect
+
     def draw(self, surface):
         surface.blit(
             self.image, self.rect)
-
-    def isCollidingWithPlayer(self, player):
-        isColliding = None
-
-        if self.rect.colliderect(player):
-            isColliding = True
-
-        return isColliding
 
     def respawn(self):
         self.rect.x = random.randint(0, 22)

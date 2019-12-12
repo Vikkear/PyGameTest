@@ -60,10 +60,10 @@ class App:
                 if event.type == QUIT:
                     self.die()
 
-            self.draw()
             self.player.update()
             self.playerBoundary()
             self.checkCollision()
+            self.draw()
             pygame.display.update()
             time.sleep(50.0 / 1000.0)
 
@@ -94,7 +94,7 @@ class App:
             self.gameOver()
 
     def checkCollision(self):
-        if self.apple.isCollidingWithPlayer(self.player.getRect()):
+        if self.player.isCollidingWithApple(self.apple.getRect()):
             self.score += 1
             self.text = self.font.render(
                 'Score: ' + str(self.score), True, white, black)

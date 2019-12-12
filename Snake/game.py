@@ -61,7 +61,6 @@ class App:
                     self.die()
 
             self.player.update()
-            self.playerBoundary()
             self.checkCollision()
             self.draw()
             pygame.display.update()

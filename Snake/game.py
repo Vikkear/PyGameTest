@@ -5,7 +5,7 @@ import time
 from lib.apple import Apple
 from lib.player import Player
 WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 720
+WINDOW_HEIGHT = 736
 
 white = (255, 255, 255)
 black = (0, 0, 0)
@@ -86,12 +86,6 @@ class App:
     def gameOver(self):
         self.die()
 
-    def playerBoundary(self):
-        playerX = self.player.getPosition("X")
-        playerY = self.player.getPosition("Y")
-
-        if playerX > WINDOW_WIDTH or playerX < 0 or playerY > WINDOW_HEIGHT or playerY < 0:
-            self.gameOver()
 
     def checkCollision(self):
         if self.player.isCollidingWithApple(self.apple.getRect()):
@@ -100,6 +94,9 @@ class App:
                 'Score: ' + str(self.score), True, white, black)
 
             self.apple.respawn()
+
+        if self.player.isCollidingWithMyself():
+            self.gameOver()
 
 
 if __name__ == "__main__":

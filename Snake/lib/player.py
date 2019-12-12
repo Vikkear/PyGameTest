@@ -1,5 +1,7 @@
 import pygame
-
+import math
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 736
 
 class Player:
     # Direction: 0 = right, 1 = down, 2 = left, 3 = up
@@ -16,16 +18,20 @@ class Player:
         self.direction = 0
 
     def moveLeft(self):
-        self.direction = 2
+        if self.direction != 0:
+            self.direction = 2
 
     def moveUp(self):
-        self.direction = 3
+        if self.direction != 1:
+            self.direction = 3
 
     def moveRight(self):
-        self.direction = 0
+        if self.direction != 2:
+            self.direction = 0
 
     def moveDown(self):
-        self.direction = 1
+        if self.direction != 3:
+            self.direction = 1
 
     def getPosition(self, type):
         if type == "X":
@@ -45,6 +51,18 @@ class Player:
         else:
             self.rect.y -= self.speed
 
+        if self.rect.x > WINDOW_WIDTH-32:
+            self.rect.x = 0
+        
+        if self.rect.x < 0:
+            self.rect.x = WINDOW_WIDTH
+
+        if self.rect.y > WINDOW_HEIGHT-32:
+            self.rect.y = 0
+
+        if self.rect.y < 0:
+            self.rect.y = WINDOW_HEIGHT
+
         # Position Logic
         if self.length >= 2:
             for i in range(self.length-1, 0, -1):
@@ -53,6 +71,8 @@ class Player:
 
         self.xPos[0] = self.rect.x
         self.yPos[0] = self.rect.y
+
+       
 
     def draw(self, surface):
         # Draw Head
@@ -73,5 +93,15 @@ class Player:
         if self.rect.colliderect(apple):
             isColliding = True
             self.updateLength()
+            
+
+        return isColliding
+
+    def isCollidingWithMyself(self):
+        isColliding = None
+
+        for i in range(1, self.length-1, 1):
+            if math.sqrt((self.xPos[i]-self.xPos[0])**2 +  (self.yPos[i] - self.yPos[0])**2) < 32:
+                isColliding = True
 
         return isColliding

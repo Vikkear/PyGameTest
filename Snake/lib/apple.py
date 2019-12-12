@@ -8,7 +8,7 @@ class Apple:
         self.image = pygame.image.load('./pics/apple.png')
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, 22)
-        self.rect.y = random.randint(0, 22)
+        self.rect.y = random.randint(0, 20)
         self.step = 32
         self.rect.x *= self.step
         self.rect.y *= self.step

@@ -23,6 +23,81 @@ class App:
 
         pygame.display.set_caption('Dodger v0.1')
 
+        self.mainmenuImg = pygame.image.load("./pics/mainmenu.png")
+        self.arrowImg = pygame.image.load("./pics/arrow.png")
+
+        self.gameState = "MENU"
+        self.timer = 0
+        self.currentChoice = 0
+        self.gameOverFlag = 0
+
+        # Text
+        self.font = pygame.font.Font('freesansbold.ttf', 16)
+        self.gameOverFont = pygame.font.Font('freesansbold.ttf', 32)
+        self.text = self.font.render(
+            'Tid: ' + str(self.timer), True, white, black)
+        self.textRect = self.text.get_rect()
+        self.textRect.x = 1200
+        self.textRect.y = 700
+
+        # Arrow
+        self.arrowRect = self.arrowImg.get_rect()
+        self.arrowRect.x = 700
+        self.arrowRect.y = 125
+        while True:
+
+            if self.gameState == "MENU":
+                self.DISPLAYSURF.blit(self.mainmenuImg, (0, 0))
+                self.DISPLAYSURF.blit(self.arrowImg, self.arrowRect)
+                self.menuKeys()
+
+            if self.gameState == "GAME":
+                self.keyChecks()
+                self.draw()
+                self.update()
+
+            if self.gameState == "GAMEOVER":
+                self.gameOverMenu()
+                self.menuKeys()
+
+            pygame.display.update()
+            time.sleep(5.0 / 1000.0)
+
+    def menuKeys(self):
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and self.gameOverFlag == 0:
+                    self.handleEnterInMenu()
+
+                if event.key == pygame.K_RETURN and self.gameOverFlag == 1:
+                    self.gameState = "MENU"
+                    self.gameOverFlag = 0
+
+                if event.key == pygame.K_ESCAPE:
+                    self.die()
+
+                if event.key == pygame.K_DOWN and self.currentChoice < 3:
+                    self.arrowRect.y += 125
+                    self.currentChoice += 1
+
+                if event.key == pygame.K_UP and self.currentChoice > 0:
+                    self.arrowRect.y -= 125
+                    self.currentChoice -= 1
+
+            if event.type == QUIT:
+                self.die()
+
+    def handleEnterInMenu(self):
+        if self.currentChoice == 0:
+            self.startGame()
+
+        elif self.currentChoice == 3:
+            self.die()
+
+        else:
+            print("Not implemented u piece of garbage")
+
+    def startGame(self):
         self.player = Player()
         self.enemies = []
         self.amountOfEnemies = 0
@@ -31,23 +106,27 @@ class App:
         self.timer = 0
         self.enemyTimer = 0
         self.timeUntilEnemySpawns = 2000
+        self.gameState = "GAME"
 
-        # Text
-        self.font = pygame.font.Font('freesansbold.ttf', 16)
-        self.text = self.font.render(
-            'Tid: ' + str(self.timer), True, white, black)
-        self.textRect = self.text.get_rect()
-        self.textRect.x = 1200
-        self.textRect.y = 700
+    def gameOverMenu(self):
+        self.DISPLAYSURF.fill((0, 0, 0))
+        self.gameOverText = self.gameOverFont.render(
+            'Score: ' + str(int(self.timer/1000)), True, white, black)
+        self.gameOverTextRect = self.gameOverText.get_rect()
+        self.gameOverTextRect.x = 600
+        self.gameOverTextRect.y = 300
 
-        while True:
-            self.keyChecks()
-            self.draw()
-            self.update()
-            pygame.display.update()
-            time.sleep(5.0 / 1000.0)
+        self.gameOverReturn = self.gameOverFont.render(
+            'Press Return to go back to the Main Menu!', True, white, black)
+        self.gameOverReturnRect = self.gameOverText.get_rect()
+        self.gameOverReturnRect.x = 320
+        self.gameOverReturnRect.y = 360
 
-    # Creates new enemy and add it to the enemy array
+        self.DISPLAYSURF.blit(self.gameOverText, self.gameOverTextRect)
+        self.DISPLAYSURF.blit(self.gameOverReturn, self.gameOverReturnRect)
+
+        # Creates new enemy and add it to the enemy array
+
     def spawnEnemy(self):
         enemy = FallingShit()
         self.enemies.append(enemy)
@@ -117,9 +196,14 @@ class App:
 
     # TODO: Add logic
     def gameOver(self):
-        self.die()
+        self.gameOverFlag = 1
+        self.gameState = "GAMEOVER"
+        self.currentChoice = 0
+        self.arrowRect.x = 700
+        self.arrowRect.y = 125
 
     # Contains collision logic
+
     def checkCollision(self):
         for i in range(0, self.amountOfEnemies):
             if self.player.isCollidingWith(self.enemies[i].getRect()):
